@@ -143,6 +143,7 @@ class PlayArtView : UIView {
     public var offensiveColor: UIColor = UIColor.white
     public var defensiveColor: UIColor = UIColor.white
     
+    //    Source: https://stackoverflow.com/questions/4334233/how-to-capture-uiview-to-uiimage-without-loss-of-quality-on-retina-display
     public func generateImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0.0)
         defer { UIGraphicsEndImageContext() }
