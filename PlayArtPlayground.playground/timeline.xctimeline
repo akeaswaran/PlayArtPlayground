@@ -2,5 +2,10 @@
 <Timeline
    version = "3.0">
    <TimelineItems>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/akeaswaran/Documents/Apps/PlayArtPlayground/PlayArtPlayground.playground#CharacterRangeLen=4&amp;CharacterRangeLoc=32099&amp;EndingColumnNumber=5&amp;EndingLineNumber=684&amp;StartingColumnNumber=1&amp;StartingLineNumber=684&amp;Timestamp=578936936.205909"
+         selectedRepresentationIndex = "0"
+         shouldTrackSuperviewWidth = "NO">
+      </LoggerValueHistoryTimelineItem>
    </TimelineItems>
 </Timeline>

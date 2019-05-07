@@ -3,6 +3,11 @@
 import UIKit
 import CoreFoundation
 
+enum FCPlayTeamType : Int {
+    case Offense
+    case Defense
+}
+
 enum FCPlayRouteType : Int {
     case None
     // Offensive
@@ -42,6 +47,7 @@ enum FCPlayAction : Int {
     case Zone
     case Man
     case Blitz
+    case Spy
 }
 
 enum FCPlayStartPosition : Int {
@@ -62,16 +68,30 @@ enum FCPlayStartPosition : Int {
     
     // RB/LB
     case BackfieldIFormMiddle
+    case DefensiveBackfieldMLB
     case BackfieldPistolLeft
+    case DefensiveBackfieldLeftCentral
+    case DefensiveBackfieldLeftWide
     case BackfieldPistolRight
+    case DefensiveBackfieldRightCentral
+    case DefensiveBackfieldRightWide
     
     // RB only
     case BackfieldIFormDeep
 
     // S
     case DefensiveBackfieldDeepCenter
-    case DefensiveBackfieldDeepLeft
-    case DefensiveBackfieldDeepRight
+    case DefensiveBackfieldDeepLeftCentral
+    case DefensiveBackfieldDeepLeftWide
+    case DefensiveBackfieldDeepRightCentral
+    case DefensiveBackfieldDeepRightWide
+    
+    // CB
+    case DefensiveBackfieldMiddleCenter
+    case DefensiveBackfieldMiddleLeftCentral
+    case DefensiveBackfieldMiddleLeftWide
+    case DefensiveBackfieldMiddleRightCentral
+    case DefensiveBackfieldMiddleRightWide
 }
 
 /*
@@ -108,21 +128,18 @@ class PlayArtView : UIView {
     
     public var playActions: Dictionary<String, Array<Dictionary<String, Any>>> = [:]
     
-    private func drawPlayerSet(actions: Array<Dictionary<String, Any>>) {
+    private func drawPlayerSet(actions: Array<Dictionary<String, Any>>, teamType: FCPlayTeamType) {
         if (actions.count == 0) {
             return;
         }
         for dict in actions {
-            let pView: UIView = drawOffensivePlayer(inPosition: FCPlayStartPosition(rawValue: dict["startPosition"] as! Int) ?? .TightRight)
+            let pView: UIView = drawPlayer(inPosition: FCPlayStartPosition(rawValue: dict["startPosition"] as! Int) ?? .TightRight, teamType: teamType)
             let action: FCPlayAction = FCPlayAction(rawValue: dict["action"] as! Int) ?? .Block
             if (dict.keys.contains("route")) {
                 let routeInfo = dict["route"] as? Dictionary<String, Any>
-                //                print("ROUTEINFO:", routeInfo, "\n")
                 if (routeInfo != nil) {
                     let type: FCPlayRouteType = FCPlayRouteType(rawValue: (routeInfo!["type"] as! Int)) ?? .Flat
-                    //                    print("type optional unwrapped successfully")
                     let direction: FCPlayRunningDirection = FCPlayRunningDirection(rawValue: (routeInfo!["direction"] as! Int)) ?? .Right
-                    //                    print("direction optional unwrapped successfully, heading to drawAction:")
                     drawAction(fromPosition: pView.center, action: action, routeType: type, direction: direction)
                 }
             } else {
@@ -144,18 +161,43 @@ class PlayArtView : UIView {
         }
     }
     
-    private func drawOffensivePlayer(inPosition position: FCPlayStartPosition) -> UIView {
-        let offView: UIView = drawOffensivePlayerRing(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), ringColor: UIColor.white)
+    private func drawPlayer(inPosition position: FCPlayStartPosition, teamType: FCPlayTeamType!) -> UIView {
+        let offView: UIView
+        if (teamType == .Offense) {
+            offView = drawOffensivePlayerRing(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), ringColor: UIColor.white)
+        } else {
+            offView = drawDefensivePlayerX(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), xColor: UIColor.white)
+        }
         if (position == .Shotgun || position == .BackfieldIFormMiddle) {
             offView.center = CGPoint(x: self.center.x, y: self.center.y + (2 * (standardPadding + standardSize)))
-        } else if (position == .UnderCenter) {
-            offView.center = CGPoint(x: self.center.x, y: self.center.y + standardSize + standardPadding)
+        } else if (position == .Shotgun || position == .BackfieldIFormMiddle) {
+            offView.center = CGPoint(x: self.center.x, y: self.center.y + (2 * (standardPadding + standardSize)))
         } else if (position == .BackfieldIFormDeep) {
             offView.center = CGPoint(x: self.center.x, y: self.center.y + (3 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldDeepCenter) {
+            offView.center = CGPoint(x: self.center.x, y: self.center.y - (5 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldDeepLeftCentral) {
+            offView.center = CGPoint(x: self.center.x - (1.5 * (standardPadding + standardSize)), y: self.center.y - (5 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldDeepRightCentral) {
+            offView.center = CGPoint(x: self.center.x + (1.5 * (standardPadding + standardSize)), y: self.center.y - (5 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldDeepLeftWide) {
+            offView.center = CGPoint(x: self.center.x - (3.5 * (standardPadding + standardSize)), y: self.center.y - (5 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldDeepRightWide) {
+            offView.center = CGPoint(x: self.center.x + (3.5 * (standardPadding + standardSize)), y: self.center.y - (5 * (standardPadding + standardSize)))
         } else if (position == .BackfieldPistolLeft) {
             offView.center = CGPoint(x: self.center.x - (1 * (standardPadding + standardSize)), y: self.center.y + (2 * (standardPadding + standardSize)))
         } else if (position == .BackfieldPistolRight) {
             offView.center = CGPoint(x: self.center.x + (1 * (standardPadding + standardSize)), y: self.center.y + (2 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldLeftWide) {
+            offView.center = CGPoint(x: self.center.x - (2.5 * (standardPadding + standardSize)), y: self.center.y - (2 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldLeftCentral) {
+            offView.center = CGPoint(x: self.center.x - (1.5 * (standardPadding + standardSize)), y: self.center.y - (2 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldMLB) {
+            offView.center = CGPoint(x: self.center.x, y: self.center.y - (2 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldRightCentral) {
+            offView.center = CGPoint(x: self.center.x + (1.5 * (standardPadding + standardSize)), y: self.center.y - (2 * (standardPadding + standardSize)))
+        } else if (position == .DefensiveBackfieldRightWide) {
+            offView.center = CGPoint(x: self.center.x + (2.5 * (standardPadding + standardSize)), y: self.center.y - (2 * (standardPadding + standardSize)))
         } else if (position == .SlotLeft) {
             offView.center = CGPoint(x: self.center.x - (4.5 * (standardPadding + standardSize)), y: self.center.y)
         } else if (position == .SlotRight) {
@@ -316,9 +358,9 @@ class PlayArtView : UIView {
             for i in 0...actions.count {
                 let xView: UIView = drawDefensivePlayerX(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), xColor: UIColor.white)
                 if (i % 2 == 0) {
-                    xView.center = CGPoint(x: self.center.x - (xView.frame.width / 2.0) + (CGFloat(i / 2) * standardSize) + (CGFloat(i / 2) * standardPadding), y: self.center.y)
+                    xView.center = CGPoint(x: self.center.x + (CGFloat(i / 2) * standardSize) + (CGFloat(i / 2) * standardPadding), y: self.center.y)
                 } else {
-                    xView.center = CGPoint(x: self.center.x - (xView.frame.width / 2.0) - (CGFloat(i / 2) * standardSize) - (CGFloat(i / 2) * standardPadding), y: self.center.y)
+                    xView.center = CGPoint(x: self.center.x - (CGFloat(i / 2) * standardSize) - (CGFloat(i / 2) * standardPadding), y: self.center.y)
                 }
                 self.addSubview(xView)
             }
@@ -326,9 +368,9 @@ class PlayArtView : UIView {
             for i in 0...actions.count-1 {
                 let xView: UIView = drawDefensivePlayerX(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), xColor: UIColor.white)
                 if (i % 2 == 0) {
-                    xView.center = CGPoint(x: self.center.x - (standardPadding * 2.0) + ((CGFloat(i / 2) + 0.5) * standardSize) + (CGFloat(i / 2) * standardPadding), y: self.center.y)
+                    xView.center = CGPoint(x: self.center.x + (0.5 + ((CGFloat(i / 2) + 0.5)) * (standardSize + (standardPadding * 3.0))), y: self.center.y)
                 } else {
-                    xView.center = CGPoint(x: self.center.x - (standardPadding * 2.0) - ((CGFloat(i / 2) + 0.5) * standardSize) - (CGFloat(i / 2) * standardPadding), y: self.center.y)
+                    xView.center = CGPoint(x: self.center.x - (0.5 + ((CGFloat(i / 2) + 0.5)) * (standardSize + (standardPadding * 3.0))), y: self.center.y)
                 }
                 self.addSubview(xView)
             }
@@ -386,22 +428,24 @@ class PlayArtView : UIView {
         let xView: UIView = UIView(frame: CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height))
         xView.backgroundColor = UIColor.clear
         
-        let a: CGFloat = CGFloat.pi / 4.0
-        let x: CGFloat = xView.center.x
-        let y: CGFloat = xView.center.y
-        var transform: CGAffineTransform = CGAffineTransform.init(translationX: x, y: y)
-        transform = transform.rotated(by: a)
-        transform = transform.translatedBy(x: -x, y: -y)
-    
-        let topRightToBottomLeftLayer: CAShapeLayer = drawLine(fromPoint: rightTop, toPoint: leftBottom, color: xColor)
-        topRightToBottomLeftLayer.setAffineTransform(transform)
-        xView.layer.addSublayer(topRightToBottomLeftLayer)
+        let xPath: UIBezierPath = UIBezierPath()
+        xPath.move(to: xView.center)
+        xPath.addLine(to: rightTop)
+        xPath.move(to: xView.center)
+        xPath.addLine(to: rightBottom)
         
-        let topLeftToBottomRightLayer: CAShapeLayer = drawLine(fromPoint: leftTop, toPoint: rightBottom, color: xColor)
-        transform = transform.inverted()
-        transform = transform.translatedBy(x: x, y: y)
-        topLeftToBottomRightLayer.setAffineTransform(transform)
-        xView.layer.addSublayer(topLeftToBottomRightLayer)
+        xPath.move(to: xView.center)
+        xPath.addLine(to: leftTop)
+        xPath.move(to: xView.center)
+        xPath.addLine(to: leftBottom)
+        
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = xPath.cgPath
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.strokeColor = xColor.cgColor
+        shapeLayer.lineWidth = 2.0
+        xView.layer.addSublayer(shapeLayer)
+        
         return xView
     }
     
@@ -422,160 +466,198 @@ class PlayArtView : UIView {
         
         if (playActions.keys.contains("OL")) {
             drawOffensiveLine()
-            drawPlayerSet(actions: playActions["QB"]!)
-            drawPlayerSet(actions: playActions["RB"]!)
-            drawPlayerSet(actions: playActions["WR"]!)
-            drawPlayerSet(actions: playActions["TE"]!)
+            drawPlayerSet(actions: playActions["QB"]!, teamType: .Offense)
+            drawPlayerSet(actions: playActions["RB"]!, teamType: .Offense)
+            drawPlayerSet(actions: playActions["WR"]!, teamType: .Offense)
+            drawPlayerSet(actions: playActions["TE"]!, teamType: .Offense)
         } else if (playActions.keys.contains("DL")) {
             drawDefensiveLine(actions: playActions["DL"]!)
+            drawPlayerSet(actions: playActions["LB"]!, teamType: .Defense)
+            drawPlayerSet(actions: playActions["S"]!, teamType: .Defense)
         }
     }
 }
 
 
 var view: PlayArtView = PlayArtView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
-var offActions = [
-    "OL" : [
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ]
+//var offActions = [
+//    "OL" : [
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ]
+//    ],
+//    "QB" : [
+//        [
+//            "action" : FCPlayAction.Handoff.rawValue,
+//            "startPosition" : FCPlayStartPosition.UnderCenter.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.None.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ]
+//    ],
+//    "RB" : [
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldIFormMiddle.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Sweep.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Dive.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldPistolLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Sweep.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Dive.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//    ],
+//    "WR" : [
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.SlotLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Wheel.rawValue,
+//                "direction" : FCPlayRunningDirection.Straight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Flat.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.SlotRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Post.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Screen.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ]
+//    ],
+//    "TE" : [
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.TightLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Comeback.rawValue,
+//                "direction" : FCPlayRunningDirection.Straight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.TightRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Slant.rawValue,
+//                "direction" : FCPlayRunningDirection.Right.rawValue
+//            ]
+//        ]
+//    ]
+//]
+
+var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
+    "DL" : [
+        [:],
+        [:],
+        [:],
+        [:]
     ],
-    "QB" : [
+    "LB" : [
         [
-            "action" : FCPlayAction.Handoff.rawValue,
-            "startPosition" : FCPlayStartPosition.UnderCenter.rawValue,
+            "action" : FCPlayAction.Blitz.rawValue,
+            "startPosition" : FCPlayStartPosition.DefensiveBackfieldMLB.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.None.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ]
-    ],
-    "RB" : [
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldIFormMiddle.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Sweep.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Dive.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldPistolLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Sweep.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Dive.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-    ],
-    "WR" : [
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.SlotLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Wheel.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Straight.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
+            "action" : FCPlayAction.Zone.rawValue,
+            "startPosition" : FCPlayStartPosition.DefensiveBackfieldRightWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Flat.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+                "type" : FCPlayRouteType.Blitz.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.SlotRight.rawValue,
+            "action" : FCPlayAction.Man.rawValue,
+            "startPosition" : FCPlayStartPosition.DefensiveBackfieldLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Post.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Screen.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+                "type" : FCPlayRouteType.Man.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ]
     ],
-    "TE" : [
+    "CB" : [
+        [:],
+        [:],
+        [:]
+    ],
+    "S" : [
         [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.TightLeft.rawValue,
+            "action" : FCPlayAction.Zone.rawValue,
+            "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Comeback.rawValue,
-                "direction" : FCPlayRunningDirection.Straight.rawValue
+                "type" : FCPlayRouteType.Blitz.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.TightRight.rawValue,
+            "action" : FCPlayAction.Man.rawValue,
+            "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepRightWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Slant.rawValue,
+                "type" : FCPlayRouteType.Man.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ]
     ]
 ]
-
-//var defActions43: Dictionary<String, Array<Dictionary<String, Int>>> = [
-//    "DL" : [
-//        [:],
-//        [:],
-//        [:],
-//        [:]
-//    ],
-//    "LB" : [
-//        [:],
-//        [:],
-//        [:]
-//    ],
-//    "CB" : [
-//        [:],
-//        [:],
-//        [:]
-//    ],
-//    "S" : [
-//        [:]
-//    ]
-//]
 //
 //var defActions34: Dictionary<String, Array<Dictionary<String, Int>>> = [
 //    "DL" : [
@@ -599,5 +681,5 @@ var offActions = [
 //    ]
 //]
 
-view.playActions = offActions
+view.playActions = defActions43
 view.refreshArt()
