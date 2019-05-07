@@ -122,9 +122,9 @@ extension UIBezierPath {
 }
 
 class PlayArtView : UIView {
-    let standardSize: CGFloat = 10.0
-    let standardPadding: CGFloat = 2.0
-    let standardLineWidth: CGFloat = 2.0
+    public var standardSize: CGFloat = 10.0
+    public var standardPadding: CGFloat = 2.0
+    public var standardLineWidth: CGFloat = 2.0
     
     public var playActions: Dictionary<String, Array<Dictionary<String, Any>>> = [:]
     
