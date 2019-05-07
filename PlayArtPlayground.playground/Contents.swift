@@ -143,6 +143,17 @@ class PlayArtView : UIView {
     public var offensiveColor: UIColor = UIColor.white
     public var defensiveColor: UIColor = UIColor.white
     
+    public func generateImage() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0.0)
+        defer { UIGraphicsEndImageContext() }
+        if let context = UIGraphicsGetCurrentContext() {
+            self.layer.render(in: context)
+            let image = UIGraphicsGetImageFromCurrentImageContext()
+            return image
+        }
+        return nil
+    }
+    
     private func drawPlayerSet(actions: Array<Dictionary<String, Any>>, teamType: FCPlayTeamType, centralPoint: CGPoint) {
         if (actions.count == 0) {
             return;
@@ -185,8 +196,8 @@ class PlayArtView : UIView {
         }
         if (position == .Shotgun || position == .BackfieldIFormMiddle) {
             offView.center = CGPoint(x: centralPoint.x, y: centralPoint.y + (2 * (standardPadding + standardSize)))
-        } else if (position == .Shotgun || position == .BackfieldIFormMiddle) {
-            offView.center = CGPoint(x: centralPoint.x, y: centralPoint.y + (2 * (standardPadding + standardSize)))
+        } else if (position == .UnderCenter) {
+            offView.center = CGPoint(x: centralPoint.x, y: centralPoint.y + (1 * (standardPadding + standardSize)))
         } else if (position == .BackfieldIFormDeep) {
             offView.center = CGPoint(x: centralPoint.x, y: centralPoint.y + (3 * (standardPadding + standardSize)))
         } else if (position == .DefensiveBackfieldDeepCenter) {
@@ -253,12 +264,14 @@ class PlayArtView : UIView {
                 if (direction == .Right || direction == .SlantRight) {
                     startPoint = CGPoint(x: playerPosition.x + standardPadding + (standardSize / 2.0), y: playerPosition.y)
                     endPoint = CGPoint(x: startPoint.x + (standardPadding * 2.0), y: startPoint.y)
+                    horizontalCrossStartPoint = CGPoint(x: endPoint.x, y: endPoint.y - (standardPadding * 1.5))
+                    horizontalCrossEndPoint = CGPoint(x: endPoint.x, y: endPoint.y + (standardPadding * 1.5))
                 } else if (direction == .Left || direction == .SlantLeft) {
                     startPoint = CGPoint(x: playerPosition.x - standardPadding - (standardSize / 2.0), y: playerPosition.y)
                     endPoint = CGPoint(x: startPoint.x - (standardPadding * 2.0), y: startPoint.y)
+                    horizontalCrossStartPoint = CGPoint(x: endPoint.x, y: endPoint.y - (standardPadding * 1.5))
+                    horizontalCrossEndPoint = CGPoint(x: endPoint.x, y: endPoint.y + (standardPadding * 1.5))
                 }
-                horizontalCrossStartPoint = CGPoint(x: endPoint.x, y: endPoint.y - (standardPadding * 1.5))
-                horizontalCrossEndPoint = CGPoint(x: endPoint.x, y: endPoint.y + (standardPadding * 1.5))
             }
             self.layer.addSublayer(drawLine(fromPoint: startPoint, toPoint: endPoint, color: blockColor))
             self.layer.addSublayer(drawLine(fromPoint: horizontalCrossStartPoint, toPoint: horizontalCrossEndPoint, color: blockColor))
@@ -594,8 +607,92 @@ class PlayArtView : UIView {
     }
 }
 
+var rocketToss = [
+    "OL" : [
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ]
+    ],
+    "QB" : [
+        [
+            "action" : FCPlayAction.Rush.rawValue,
+            "startPosition" : FCPlayStartPosition.UnderCenter.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Sweep.rawValue,
+                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+            ]
+        ]
+    ],
+    "RB" : [
+        [
+            "action" : FCPlayAction.Rush.rawValue,
+            "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Sweep.rawValue,
+                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+            ]
+        ]
+    ],
+    "WR" : [
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.None.rawValue,
+                "direction" : FCPlayRunningDirection.Straight.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.None.rawValue,
+                "direction" : FCPlayRunningDirection.Straight.rawValue
+            ]
+        ]
+    ],
+    "TE" : [
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.TightLeft.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Sweep.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.TightRight.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Sweep.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
+            ]
+        ]
+    ]
+]
 
 var view: PlayArtView = PlayArtView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
+view.playActions = rocketToss
+view.refreshArt()
+view.generateImage()
+
 //var offActions = [
 //    "OL" : [
 //        [
