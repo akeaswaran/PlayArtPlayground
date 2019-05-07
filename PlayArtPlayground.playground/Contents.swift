@@ -3,12 +3,12 @@
 import UIKit
 import CoreFoundation
 
-enum FCPlayTeamType : Int {
+@objc enum FCPlayTeamType : Int {
     case Offense
     case Defense
 }
 
-enum FCPlayRouteType : Int {
+@objc enum FCPlayRouteType : Int {
     case None
     // Offensive
     case Post
@@ -28,7 +28,7 @@ enum FCPlayRouteType : Int {
     case Spy
 }
 
-enum FCPlayRunningDirection : Int {
+@objc enum FCPlayRunningDirection : Int {
     case Right
     case Left
     case SlantRight
@@ -44,7 +44,7 @@ enum FCPlayRunningDirection : Int {
     case Stay
 }
 
-enum FCPlayAction : Int {
+@objc enum FCPlayAction : Int {
     // Offensive
     case Block
     case Rush
@@ -57,7 +57,7 @@ enum FCPlayAction : Int {
     case Blitz
 }
 
-enum FCPlayStartPosition : Int {
+@objc enum FCPlayStartPosition : Int {
     // DL/OL
     case LOS
     
@@ -148,7 +148,7 @@ class PlayArtView : UIView {
     public var shouldDrawLineOfScrimmage: Bool = false
     
     //    Source: https://stackoverflow.com/questions/4334233/how-to-capture-uiview-to-uiimage-without-loss-of-quality-on-retina-display
-    public func generateImage() -> UIImage? {
+    @objc public func generateImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0.0)
         defer { UIGraphicsEndImageContext() }
         if let context = UIGraphicsGetCurrentContext() {
@@ -594,7 +594,7 @@ class PlayArtView : UIView {
         context!.fill(self.frame)
     }
     
-    public func refreshArt() {
+    @objc public func refreshArt() {
         if (self.layer.sublayers != nil && self.layer.sublayers!.count > 0) {
             for layer: CALayer in self.layer.sublayers! {
                 layer.removeFromSuperlayer()
