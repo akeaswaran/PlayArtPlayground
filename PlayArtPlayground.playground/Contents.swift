@@ -122,9 +122,9 @@ extension UIBezierPath {
 }
 
 class PlayArtView : UIView {
-    
-    let standardSize: CGFloat = 10
-    let standardPadding: CGFloat = 2
+    let standardSize: CGFloat = 10.0
+    let standardPadding: CGFloat = 2.0
+    let standardLineWidth: CGFloat = 2.0
     
     public var playActions: Dictionary<String, Array<Dictionary<String, Any>>> = [:]
     
@@ -357,7 +357,7 @@ class PlayArtView : UIView {
         shapeLayer.path = arrowhead.cgPath
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.strokeColor = color.cgColor
-        shapeLayer.lineWidth = 2.0
+        shapeLayer.lineWidth = standardLineWidth
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         shapeLayer.lineCap = CAShapeLayerLineCap.round
         return shapeLayer
@@ -398,7 +398,7 @@ class PlayArtView : UIView {
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = path.cgPath
         shapeLayer.strokeColor = color.cgColor
-        shapeLayer.lineWidth = 2.0
+        shapeLayer.lineWidth = standardLineWidth
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         shapeLayer.lineCap = CAShapeLayerLineCap.round
         return shapeLayer
@@ -407,7 +407,7 @@ class PlayArtView : UIView {
     private func drawOffensivePlayerRing(frame: CGRect, ringColor: UIColor) -> UIView
     {
         let halfSize:CGFloat = min(frame.size.width/2, frame.size.height/2)
-        let desiredLineWidth:CGFloat = 2
+        let desiredLineWidth:CGFloat = standardLineWidth
         
         let circlePath = UIBezierPath(
             arcCenter: CGPoint(x:halfSize,y:halfSize),
@@ -454,7 +454,7 @@ class PlayArtView : UIView {
         shapeLayer.path = xPath.cgPath
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.strokeColor = xColor.cgColor
-        shapeLayer.lineWidth = 2.0
+        shapeLayer.lineWidth = standardLineWidth
         xView.layer.addSublayer(shapeLayer)
         
         return xView
