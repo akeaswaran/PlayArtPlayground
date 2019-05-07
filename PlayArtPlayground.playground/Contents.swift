@@ -292,7 +292,7 @@ class PlayArtView : UIView {
             let endPoint: CGPoint = CGPoint(x: playerPosition.x + (scaleFactor * (self.center.x - playerPosition.x)), y: playerPosition.y + (scaleFactor * (targetYValue - playerPosition.y)))
             self.layer.addSublayer(drawArrow(startPoint: startPoint, endPoint: endPoint, color: blitzColor))
         }
-        // else handoff - do nothing
+        // else handoff OR pass - do nothing
     }
     
     private func drawRoute(fromPosition playerPosition: CGPoint, routeType: FCPlayRouteType!, direction: FCPlayRunningDirection!) {
@@ -300,7 +300,7 @@ class PlayArtView : UIView {
         var endPoint: CGPoint? = nil
         if (routeType == .Streak) {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y - standardPadding - (standardSize / 2.0))
-            endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.0))
+            endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 5.0))
 
             self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Post) {
@@ -699,6 +699,91 @@ var rocketToss = [
 
 var view: PlayArtView = PlayArtView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
 view.playActions = rocketToss
+view.refreshArt()
+view.generateImage()
+
+var fourVerts = [
+    "OL" : [
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ],
+        [
+            "action" : FCPlayAction.Block.rawValue,
+            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+        ]
+    ],
+    "QB" : [
+        [
+            "action" : FCPlayAction.Pass.rawValue,
+            "startPosition" : FCPlayStartPosition.Shotgun.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.None.rawValue,
+                "direction" : FCPlayRunningDirection.Straight.rawValue
+            ]
+        ]
+    ],
+    "RB" : [
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Wheel.rawValue,
+                "direction" : FCPlayRunningDirection.Right.rawValue
+            ]
+        ]
+    ],
+    "WR" : [
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.SlotRight.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Streak.rawValue,
+                "direction" : FCPlayRunningDirection.Straight.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Comeback.rawValue,
+                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.SlotLeft.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Post.rawValue,
+                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.RunRoute.rawValue,
+            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Comeback.rawValue,
+                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+            ]
+        ]
+    ],
+    "TE" : [
+        
+    ]
+]
+view.playActions = fourVerts
 view.refreshArt()
 view.generateImage()
 
