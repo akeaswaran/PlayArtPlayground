@@ -24,7 +24,6 @@ enum FCPlayRouteType : Int {
     // defensive
     case Zone
     case Man
-    case Blitz
 }
 
 enum FCPlayRunningDirection : Int {
@@ -44,8 +43,7 @@ enum FCPlayAction : Int {
     case Handoff
     
     // defensive
-    case Zone
-    case Man
+    case Coverage
     case Blitz
     case Spy
 }
@@ -251,7 +249,16 @@ class PlayArtView : UIView {
             if (routeType != nil && routeType! != .None) {
                 drawRoute(fromPosition: playerPosition, routeType: routeType!, direction: direction!)
             }
-        } // else handoff - do nothing
+        } else if (action == .Blitz) {
+            let startPoint: CGPoint = CGPoint(x: playerPosition.x, y: playerPosition.y + standardPadding + (standardSize / 2.0))
+            let targetYValue: CGFloat = playerPosition.y + (((0.9 * self.frame.height) - playerPosition.y))
+            let scaleFactor: CGFloat = 0.60
+//            let tempEndPoint: CGPoint = CGPoint(x: self.center.x, y: )
+//            let slope: CGFloat = (tempEndPoint.y - startPoint.y) / (tempEndPoint.x - startPoint.x)
+            let endPoint: CGPoint = CGPoint(x: playerPosition.x + (scaleFactor * (self.center.x - playerPosition.x)), y: playerPosition.y + (scaleFactor * (targetYValue - playerPosition.y)))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint, endPoint: endPoint, color: UIColor.red))
+        }
+        // else handoff - do nothing
     }
     
     private func drawRoute(fromPosition playerPosition: CGPoint, routeType: FCPlayRouteType!, direction: FCPlayRunningDirection!) {
@@ -373,7 +380,7 @@ class PlayArtView : UIView {
                     xView.center = CGPoint(x: centralPoint.x - ((CGFloat(i / 2) + CGFloat(i % 2))) * ((standardSize + standardPadding) * 2.5), y: centralPoint.y)
                 }
                 self.addSubview(xView)
-//                drawAction(fromPosition: xView.center, action: .Block, routeType: nil, direction: nil)
+                drawAction(fromPosition: xView.center, action: .Blitz, routeType: .None, direction: nil)
             }
         } else {
             for i in 0..<actions.count {
@@ -384,6 +391,7 @@ class PlayArtView : UIView {
                     xView.center = CGPoint(x: centralPoint.x - (0.5 + ((CGFloat(i / 2) + 0.5)) * (standardSize + (standardPadding * 3.0))), y: centralPoint.y)
                 }
                 self.addSubview(xView)
+                drawAction(fromPosition: xView.center, action: .Blitz, routeType: .None, direction: nil)
             }
         }
     }
@@ -651,20 +659,20 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
             "action" : FCPlayAction.Blitz.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMLB.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Zone.rawValue,
+                "type" : FCPlayRouteType.None.rawValue,
                 "direction" : FCPlayRunningDirection.Straight.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldRightWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldLeftWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -674,15 +682,15 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
     ],
     "CB" : [
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.None.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleCenter.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -690,23 +698,23 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleLeftCentral.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleRightCentral.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleRightWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -716,15 +724,15 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
     ],
     "S" : [
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepRightWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -763,15 +771,15 @@ var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldLeftCentral.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldRightWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -779,7 +787,7 @@ var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldLeftWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -789,15 +797,15 @@ var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
     ],
     "CB" : [
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleCenter.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -805,23 +813,23 @@ var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleLeftCentral.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleRightCentral.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleRightWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
@@ -831,15 +839,15 @@ var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
     ],
     "S" : [
         [
-            "action" : FCPlayAction.Zone.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepLeftWide.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Blitz.rawValue,
+                "type" : FCPlayRouteType.Zone.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ],
         [
-            "action" : FCPlayAction.Man.rawValue,
+            "action" : FCPlayAction.Coverage.rawValue,
             "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepRightWide.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Man.rawValue,
