@@ -265,7 +265,7 @@ class PlayArtView : UIView {
             var horizontalCrossStartPoint: CGPoint = CGPoint(x: endPoint.x - (standardPadding * 1.5), y: endPoint.y)
             var horizontalCrossEndPoint: CGPoint = CGPoint(x: endPoint.x + (standardPadding * 1.5), y: endPoint.y)
             if (direction != nil) {
-                print("found a direction to handle for blocking")
+//                print("found a direction to handle for blocking")
                 if (direction == .Right || direction == .SlantRight) {
                     startPoint = CGPoint(x: playerPosition.x + standardPadding + (standardSize / 2.0), y: playerPosition.y)
                     endPoint = CGPoint(x: startPoint.x + (standardPadding * 2.0), y: startPoint.y)
