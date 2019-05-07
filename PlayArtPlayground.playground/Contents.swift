@@ -152,6 +152,10 @@ class PlayArtView : UIView {
             offView.center = CGPoint(x: self.center.x, y: self.center.y + standardSize + standardPadding)
         } else if (position == .BackfieldIFormDeep) {
             offView.center = CGPoint(x: self.center.x, y: self.center.y + (3 * (standardPadding + standardSize)))
+        } else if (position == .BackfieldPistolLeft) {
+            offView.center = CGPoint(x: self.center.x - (1 * (standardPadding + standardSize)), y: self.center.y + (2 * (standardPadding + standardSize)))
+        } else if (position == .BackfieldPistolRight) {
+            offView.center = CGPoint(x: self.center.x + (1 * (standardPadding + standardSize)), y: self.center.y + (2 * (standardPadding + standardSize)))
         } else if (position == .SlotLeft) {
             offView.center = CGPoint(x: self.center.x - (4.5 * (standardPadding + standardSize)), y: self.center.y)
         } else if (position == .SlotRight) {
@@ -475,6 +479,22 @@ var offActions = [
         [
             "action" : FCPlayAction.Rush.rawValue,
             "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Dive.rawValue,
+                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.Rush.rawValue,
+            "startPosition" : FCPlayStartPosition.BackfieldPistolLeft.rawValue,
+            "route" : [
+                "type" : FCPlayRouteType.Sweep.rawValue,
+                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+            ]
+        ],
+        [
+            "action" : FCPlayAction.Rush.rawValue,
+            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
             "route" : [
                 "type" : FCPlayRouteType.Dive.rawValue,
                 "direction" : FCPlayRunningDirection.SlantRight.rawValue
