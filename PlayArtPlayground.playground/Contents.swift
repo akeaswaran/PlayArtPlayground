@@ -134,6 +134,15 @@ class PlayArtView : UIView {
     
     public var playActions: Dictionary<String, Array<Dictionary<String, Any>>> = [:]
     
+    public var routeColor: UIColor = UIColor.yellow
+    public var zoneColor: UIColor = UIColor.blue
+    public var spyColor: UIColor = UIColor(red:0.87, green:0.38, blue:0.65, alpha:1.00)
+    public var blockColor: UIColor = UIColor.gray
+    public var blitzColor: UIColor = UIColor.red
+    
+    public var offensiveColor: UIColor = UIColor.white
+    public var defensiveColor: UIColor = UIColor.white
+    
     private func drawPlayerSet(actions: Array<Dictionary<String, Any>>, teamType: FCPlayTeamType, centralPoint: CGPoint) {
         if (actions.count == 0) {
             return;
@@ -170,9 +179,9 @@ class PlayArtView : UIView {
     private func drawPlayer(inPosition position: FCPlayStartPosition, teamType: FCPlayTeamType!, centralPoint: CGPoint) -> UIView {
         let offView: UIView
         if (teamType == .Offense) {
-            offView = drawOffensivePlayerRing(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), ringColor: UIColor.white)
+            offView = drawOffensivePlayerRing(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), ringColor: offensiveColor)
         } else {
-            offView = drawDefensivePlayerX(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), xColor: UIColor.white)
+            offView = drawDefensivePlayerX(frame: CGRect(x: 0, y: 0, width: standardSize, height: standardSize), xColor: defensiveColor)
         }
         if (position == .Shotgun || position == .BackfieldIFormMiddle) {
             offView.center = CGPoint(x: centralPoint.x, y: centralPoint.y + (2 * (standardPadding + standardSize)))
@@ -251,8 +260,8 @@ class PlayArtView : UIView {
                 horizontalCrossStartPoint = CGPoint(x: endPoint.x, y: endPoint.y - (standardPadding * 1.5))
                 horizontalCrossEndPoint = CGPoint(x: endPoint.x, y: endPoint.y + (standardPadding * 1.5))
             }
-            self.layer.addSublayer(drawLine(fromPoint: startPoint, toPoint: endPoint, color: UIColor.gray))
-            self.layer.addSublayer(drawLine(fromPoint: horizontalCrossStartPoint, toPoint: horizontalCrossEndPoint, color: UIColor.gray))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint, toPoint: endPoint, color: blockColor))
+            self.layer.addSublayer(drawLine(fromPoint: horizontalCrossStartPoint, toPoint: horizontalCrossEndPoint, color: blockColor))
         } else if (action == .Rush || action == .RunRoute || action == .Coverage) {
             if (routeType != nil && routeType! != .None) {
                 drawRoute(fromPosition: playerPosition, routeType: routeType!, direction: direction!)
@@ -264,7 +273,7 @@ class PlayArtView : UIView {
 //            let tempEndPoint: CGPoint = CGPoint(x: self.center.x, y: )
 //            let slope: CGFloat = (tempEndPoint.y - startPoint.y) / (tempEndPoint.x - startPoint.x)
             let endPoint: CGPoint = CGPoint(x: playerPosition.x + (scaleFactor * (self.center.x - playerPosition.x)), y: playerPosition.y + (scaleFactor * (targetYValue - playerPosition.y)))
-            self.layer.addSublayer(drawArrow(startPoint: startPoint, endPoint: endPoint, color: UIColor.red))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint, endPoint: endPoint, color: blitzColor))
         }
         // else handoff - do nothing
     }
@@ -276,11 +285,11 @@ class PlayArtView : UIView {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y - standardPadding - (standardSize / 2.0))
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.0))
 
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Post) {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y - standardPadding - (standardSize / 2.0))
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.0))
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
             startPoint = endPoint!
             if (direction == .SlantRight) {
                 endPoint = CGPoint(x: startPoint!.x + (standardSize * 2), y: startPoint!.y - (standardSize * 2))
@@ -292,7 +301,7 @@ class PlayArtView : UIView {
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 2), y: startPoint!.y)
             }
 
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Flat || routeType == .Sweep) {
             startPoint = playerPosition
             if (direction == .SlantLeft) {
@@ -305,15 +314,15 @@ class PlayArtView : UIView {
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 2.5), y: startPoint!.y - (standardSize * 0.75))
             }
 
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Screen) {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y + standardPadding + (standardSize / 2.0))
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y + (standardPadding * 2.0))
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Slant) {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y - standardPadding - (standardSize / 2.0))
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 1.0))
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
             startPoint = endPoint!
             if (direction == .SlantRight || direction == .Right) {
                 endPoint = CGPoint(x: startPoint!.x + (standardSize * 2.5), y: startPoint!.y - (standardSize * 1))
@@ -321,11 +330,11 @@ class PlayArtView : UIView {
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 2.5), y: startPoint!.y - (standardSize * 1))
             }
 
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Comeback) {
             startPoint = CGPoint(x: playerPosition.x, y: playerPosition.y - standardPadding - (standardSize / 2.0))
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.0))
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
             startPoint = endPoint!
             if (direction == .SlantLeft || direction == .Left) {
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 0.5), y: startPoint!.y + (standardSize * 0.5))
@@ -333,7 +342,7 @@ class PlayArtView : UIView {
                 endPoint = CGPoint(x: startPoint!.x + (standardSize * 0.5), y: startPoint!.y + (standardSize * 0.5))
             }
 
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Dive) {
             startPoint = playerPosition
             if (direction == .SlantLeft) {
@@ -346,7 +355,7 @@ class PlayArtView : UIView {
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 1.25), y: startPoint!.y - (standardSize * 2.5))
             }
             
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Wheel) {
             if (direction == .SlantRight || direction == .Right) {
                 startPoint = CGPoint(x: playerPosition.x + standardPadding + (standardSize / 2.0), y: playerPosition.y)
@@ -355,11 +364,11 @@ class PlayArtView : UIView {
                 startPoint = CGPoint(x: playerPosition.x - standardPadding - (standardSize / 2.0), y: playerPosition.y)
                 endPoint = CGPoint(x: startPoint!.x - (standardSize * 2), y: startPoint!.y)
             }
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
             startPoint = endPoint!
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.5))
             
-            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: UIColor.yellow))
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Zone) {
             startPoint = playerPosition
             if (direction == .SlantLeft) {
@@ -381,12 +390,12 @@ class PlayArtView : UIView {
             } else { // straight
                 endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y + (standardSize * 2.5))
             }
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor.blue))
-            self.layer.addSublayer(drawBubble(centerPoint: endPoint!, color: UIColor.blue))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: zoneColor))
+            self.layer.addSublayer(drawBubble(centerPoint: endPoint!, color: zoneColor))
         } else if (routeType == .Spy) {
             startPoint = playerPosition
             if (direction == .Stay) {
-                self.layer.addSublayer(drawBubble(centerPoint: startPoint!, color: UIColor(red:0.87, green:0.38, blue:0.65, alpha:1.00)))
+                self.layer.addSublayer(drawBubble(centerPoint: startPoint!, color: spyColor))
                 return;
             }
             if (direction == .SlantLeft) {
@@ -408,8 +417,8 @@ class PlayArtView : UIView {
             } else { // straight
                 endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y + (standardSize * 1.5))
             }
-            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: UIColor(red:0.87, green:0.38, blue:0.65, alpha:1.00)))
-            self.layer.addSublayer(drawBubble(centerPoint: endPoint!, color: UIColor(red:0.87, green:0.38, blue:0.65, alpha:1.00)))
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: spyColor))
+            self.layer.addSublayer(drawBubble(centerPoint: endPoint!, color: spyColor))
         }
     }
     
@@ -587,157 +596,157 @@ class PlayArtView : UIView {
 
 
 var view: PlayArtView = PlayArtView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
-var offActions = [
-    "OL" : [
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Block.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ]
-    ],
-    "QB" : [
-        [
-            "action" : FCPlayAction.Handoff.rawValue,
-            "startPosition" : FCPlayStartPosition.UnderCenter.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.None.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ]
-    ],
-    "RB" : [
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldIFormMiddle.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Sweep.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Dive.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldPistolLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Sweep.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.Rush.rawValue,
-            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Dive.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ],
-    ],
-    "WR" : [
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.SlotLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Wheel.rawValue,
-                "direction" : FCPlayRunningDirection.Straight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Flat.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.SlotRight.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Post.rawValue,
-                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Screen.rawValue,
-                "direction" : FCPlayRunningDirection.SlantRight.rawValue
-            ]
-        ]
-    ],
-    "TE" : [
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.TightLeft.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Comeback.rawValue,
-                "direction" : FCPlayRunningDirection.Straight.rawValue
-            ]
-        ],
-        [
-            "action" : FCPlayAction.RunRoute.rawValue,
-            "startPosition" : FCPlayStartPosition.TightRight.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Slant.rawValue,
-                "direction" : FCPlayRunningDirection.Right.rawValue
-            ]
-        ]
-    ]
-]
-view.playActions = offActions
-view.refreshArt()
+//var offActions = [
+//    "OL" : [
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Block.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ]
+//    ],
+//    "QB" : [
+//        [
+//            "action" : FCPlayAction.Handoff.rawValue,
+//            "startPosition" : FCPlayStartPosition.UnderCenter.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.None.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ]
+//    ],
+//    "RB" : [
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldIFormMiddle.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Sweep.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldIFormDeep.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Dive.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldPistolLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Sweep.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.Rush.rawValue,
+//            "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Dive.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ],
+//    ],
+//    "WR" : [
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.SlotLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Wheel.rawValue,
+//                "direction" : FCPlayRunningDirection.Straight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.WideRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Flat.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.SlotRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Post.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantLeft.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.WideLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Screen.rawValue,
+//                "direction" : FCPlayRunningDirection.SlantRight.rawValue
+//            ]
+//        ]
+//    ],
+//    "TE" : [
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.TightLeft.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Comeback.rawValue,
+//                "direction" : FCPlayRunningDirection.Straight.rawValue
+//            ]
+//        ],
+//        [
+//            "action" : FCPlayAction.RunRoute.rawValue,
+//            "startPosition" : FCPlayStartPosition.TightRight.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Slant.rawValue,
+//                "direction" : FCPlayRunningDirection.Right.rawValue
+//            ]
+//        ]
+//    ]
+//]
+//view.playActions = offActions
+//view.refreshArt()
 
-var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
-    "DL" : [
-        [
-            "action" : FCPlayAction.Blitz.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Blitz.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Blitz.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ],
-        [
-            "action" : FCPlayAction.Blitz.rawValue,
-            "startPosition" : FCPlayStartPosition.LOS.rawValue,
-        ]
-    ],
-    "LB" : [
-        [
-            "action" : FCPlayAction.Coverage.rawValue,
-            "startPosition" : FCPlayStartPosition.DefensiveBackfieldMLB.rawValue,
-            "route" : [
-                "type" : FCPlayRouteType.Spy.rawValue,
-                "direction" : FCPlayRunningDirection.Stay.rawValue
-            ]
-        ],
+//var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
+//    "DL" : [
+//        [
+//            "action" : FCPlayAction.Blitz.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Blitz.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Blitz.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ],
+//        [
+//            "action" : FCPlayAction.Blitz.rawValue,
+//            "startPosition" : FCPlayStartPosition.LOS.rawValue,
+//        ]
+//    ],
+//    "LB" : [
+//        [
+//            "action" : FCPlayAction.Coverage.rawValue,
+//            "startPosition" : FCPlayStartPosition.DefensiveBackfieldMLB.rawValue,
+//            "route" : [
+//                "type" : FCPlayRouteType.Spy.rawValue,
+//                "direction" : FCPlayRunningDirection.Stay.rawValue
+//            ]
+//        ],
 //        [
 //            "action" : FCPlayAction.Blitz.rawValue,
 //            "startPosition" : FCPlayStartPosition.DefensiveBackfieldRightWide.rawValue,
@@ -754,8 +763,8 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
 //                "direction" : FCPlayRunningDirection.Right.rawValue
 //            ]
 //        ]
-    ],
-    "CB" : [
+//    ],
+//    "CB" : [
 //        [
 //            "action" : FCPlayAction.Coverage.rawValue,
 //            "startPosition" : FCPlayStartPosition.DefensiveBackfieldMiddleCenter.rawValue,
@@ -788,8 +797,8 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
 //                "direction" : FCPlayRunningDirection.BackSlantLeft.rawValue
 //            ]
 //        ]
-    ],
-    "S" : [
+//    ],
+//    "S" : [
 //        [
 //            "action" : FCPlayAction.Coverage.rawValue,
 //            "startPosition" : FCPlayStartPosition.DefensiveBackfieldDeepLeftWide.rawValue,
@@ -806,11 +815,11 @@ var defActions43: Dictionary<String, Array<Dictionary<String, Any>>> = [
 //                "direction" : FCPlayRunningDirection.Right.rawValue
 //            ]
 //        ]
-    ]
-]
-
-view.playActions = defActions43
-view.refreshArt()
+//    ]
+//]
+//
+//view.playActions = defActions43
+//view.refreshArt()
 
 
 //var defActions34: Dictionary<String, Array<Dictionary<String, Any>>> = [
