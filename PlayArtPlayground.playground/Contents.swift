@@ -143,6 +143,9 @@ class PlayArtView : UIView {
     public var offensiveColor: UIColor = UIColor.white
     public var defensiveColor: UIColor = UIColor.white
     
+    public var shouldDrawGuidelines: Bool = false
+    public var shouldDrawLineOfScrimmage: Bool = false
+    
     //    Source: https://stackoverflow.com/questions/4334233/how-to-capture-uiview-to-uiimage-without-loss-of-quality-on-retina-display
     public func generateImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0.0)
@@ -583,10 +586,13 @@ class PlayArtView : UIView {
         for view in self.subviews {
             view.removeFromSuperview()
         }
-//        // vertical guideline
-//        self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: self.center.x, y: 0), toPoint: CGPoint(x: self.center.x, y: self.frame.height), color: UIColor.red))
-//        // horizontal guideline
-//        self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: 0, y: self.center.y), toPoint: CGPoint(x: self.frame.width, y: self.center.y), color: UIColor.green))
+
+        if (shouldDrawGuidelines) {
+            // vertical guideline
+            self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: self.center.x, y: 0), toPoint: CGPoint(x: self.center.x, y: self.frame.height), color: UIColor.red))
+            // horizontal guideline
+            self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: 0, y: self.center.y), toPoint: CGPoint(x: self.frame.width, y: self.center.y), color: UIColor.green))
+        }
         
         var centralPoint: CGPoint = self.center
         if (playActions.keys.contains("OL")) {
@@ -604,7 +610,9 @@ class PlayArtView : UIView {
             drawPlayerSet(actions: playActions["S"]!, teamType: .Defense, centralPoint: centralPoint)
         }
         // LOS
-//        self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: 0, y: centralPoint.y + ((standardSize / 2.0) + standardPadding)), toPoint: CGPoint(x: self.frame.width, y: centralPoint.y + ((standardSize / 2.0) + standardPadding)), color: UIColor.lightText))
+        if (shouldDrawLineOfScrimmage) {
+            self.layer.addSublayer(drawLine(fromPoint: CGPoint(x: 0, y: centralPoint.y + ((standardSize / 2.0) + standardPadding)), toPoint: CGPoint(x: self.frame.width, y: centralPoint.y + ((standardSize / 2.0) + standardPadding)), color: UIColor.lightText))
+        }
     }
 }
 
