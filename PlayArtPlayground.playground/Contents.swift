@@ -20,6 +20,7 @@ enum FCPlayRouteType : Int {
     case Sweep
     case Dive
     case Wheel
+    case Angle
     
     // defensive
     case Zone
@@ -386,6 +387,22 @@ class PlayArtView : UIView {
             endPoint = CGPoint(x: startPoint!.x, y: startPoint!.y - (standardSize * 3.5))
             
             self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
+        } else if (routeType == .Angle) {
+            if (direction == .SlantRight || direction == .Right) {
+                startPoint = CGPoint(x: playerPosition.x + standardPadding + (standardSize / 2.0), y: playerPosition.y)
+                endPoint = CGPoint(x: startPoint!.x + (standardSize * 3), y: startPoint!.y - (standardSize * 2.5))
+            } else {
+                startPoint = CGPoint(x: playerPosition.x - standardPadding - (standardSize / 2.0), y: playerPosition.y)
+                endPoint = CGPoint(x: startPoint!.x - (standardSize * 3), y: startPoint!.y - (standardSize * 2.5))
+            }
+            self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
+            startPoint = endPoint!
+            if (direction == .SlantRight || direction == .Right) {
+                endPoint = CGPoint(x: startPoint!.x - (standardSize * 2), y: startPoint!.y - (standardSize * 2.5))
+            } else {
+                endPoint = CGPoint(x: startPoint!.x + (standardSize * 2), y: startPoint!.y - (standardSize * 2.5))
+            }
+            self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
         } else if (routeType == .Zone) {
             startPoint = playerPosition
             if (direction == .SlantLeft) {
@@ -740,7 +757,7 @@ var fourVerts = [
             "action" : FCPlayAction.RunRoute.rawValue,
             "startPosition" : FCPlayStartPosition.BackfieldPistolRight.rawValue,
             "route" : [
-                "type" : FCPlayRouteType.Wheel.rawValue,
+                "type" : FCPlayRouteType.Angle.rawValue,
                 "direction" : FCPlayRunningDirection.Right.rawValue
             ]
         ]
