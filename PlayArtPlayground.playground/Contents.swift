@@ -355,9 +355,9 @@ class PlayArtView : UIView {
             self.layer.addSublayer(drawLine(fromPoint: startPoint!, toPoint: endPoint!, color: routeColor))
             startPoint = endPoint!
             if (direction == .SlantLeft || direction == .Left) {
-                endPoint = CGPoint(x: startPoint!.x - (standardSize * 0.5), y: startPoint!.y + (standardSize * 0.5))
+                endPoint = CGPoint(x: startPoint!.x - (standardSize * 0.75), y: startPoint!.y + (standardSize * 0.75))
             } else {
-                endPoint = CGPoint(x: startPoint!.x + (standardSize * 0.5), y: startPoint!.y + (standardSize * 0.5))
+                endPoint = CGPoint(x: startPoint!.x + (standardSize * 0.75), y: startPoint!.y + (standardSize * 0.75))
             }
 
             self.layer.addSublayer(drawArrow(startPoint: startPoint!, endPoint: endPoint!, color: routeColor))
